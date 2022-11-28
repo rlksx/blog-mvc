@@ -36,7 +36,40 @@ public class CategoryController : ControllerBase
 
         return Created($"v1/categories/{model.Id}", model);
     }
-    
+
+    [HttpPut("v1/categories/{id:int}")]
+    public async Task<IActionResult> PutAsync(
+        [FromServices] BlogDataContext context,
+        [FromBody] Category model,
+        [FromRoute] int id)
+    {
+        var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        if (category == null)
+            return NotFound(); // ERROR 404
+        
+        category.Name = model.Name;
+        category.Slug = model.Slug;
+
+        context.Categories.Update(category);
+        await context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [HttpDelete("v1/categories/{id:int}")]
+    public async Task<IActionResult> DeleteAsync(
+        [FromServices] BlogDataContext context,
+        [FromRoute] int id)
+    {
+        var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        if (category == null)
+            return NotFound(); // 404
+
+        context.Categories.Remove(category);
+        await context.SaveChangesAsync();
+        
+        return Ok(category);
+    }
     
     /* async - indica que as ações serão executadas assicronamente,
      e só retornam Taks<T>
