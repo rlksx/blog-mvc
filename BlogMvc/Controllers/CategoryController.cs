@@ -11,8 +11,20 @@ public class CategoryController : ControllerBase
 {
     /* API REST - endpoints com o mesmo nome do controller no plural em minusculo */
     [HttpGet("v1/categories")]
-    public async Task<IActionResult> GetAsync([FromServices] BlogDataContext context) 
-        => Ok(await context.Categories.ToListAsync()); // retorn todas as categorias
+    public async Task<IActionResult> GetAsync([FromServices] BlogDataContext context)
+    {
+        var category = await context.Categories.ToListAsync();
+
+        try
+        {
+            // retorna todas as categorias
+            return Ok(new ResultViewModel<List<Category>>(category));
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(500, new ResultViewModel<List<Category>>("Falha interna so servidor"));
+        }
+    }
     /* await - aguarda o método retornar para continuar a executar async */
 
     [HttpGet("v1/categories/{id:int}")]
@@ -30,7 +42,7 @@ public class CategoryController : ControllerBase
     [HttpPost("v1/categories/")]
     public async Task<IActionResult> PostAsync(
         [FromServices] BlogDataContext context,
-        [FromBody] CreateCategotyViewModel model)
+        [FromBody] EditorCategoryViewModel model)
     {
         try
         {
