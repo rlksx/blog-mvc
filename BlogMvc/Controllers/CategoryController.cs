@@ -92,7 +92,7 @@ public class CategoryController : ControllerBase
         }
         catch (Exception exception)
         {
-            return StatusCode(500, "Não foi possivel deletar a categoria!")
+            return StatusCode(500, "Não foi possivel deletar a categoria!");
         }
         
     }
