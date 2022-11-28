@@ -31,10 +31,21 @@ public class CategoryController : ControllerBase
         [FromServices] BlogDataContext context,
         [FromBody] Category model)
     {
-        await context.Categories.AddAsync(model);
-        await context.SaveChangesAsync();
+        try
+        {
+            await context.Categories.AddAsync(model);
+            await context.SaveChangesAsync();
 
-        return Created($"v1/categories/{model.Id}", model);
+            return Created($"v1/categories/{model.Id}", model);
+        }
+        catch (DbUpdateException exception)
+        {
+            return StatusCode(500, "Não foi possivel incluir a categoria :(");
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(500, "Falha interna no servidor");
+        }
     }
 
     [HttpPut("v1/categories/{id:int}")]
@@ -50,10 +61,17 @@ public class CategoryController : ControllerBase
         category.Name = model.Name;
         category.Slug = model.Slug;
 
-        context.Categories.Update(category);
-        await context.SaveChangesAsync();
-
-        return Ok();
+        try
+        {
+            context.Categories.Update(category);
+            await context.SaveChangesAsync();
+            
+            return Ok();
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(500, "Falha interna no servidor, não foi possivel alterar a categoria!");
+        }
     }
 
     [HttpDelete("v1/categories/{id:int}")]
@@ -65,10 +83,18 @@ public class CategoryController : ControllerBase
         if (category == null)
             return NotFound(); // 404
 
-        context.Categories.Remove(category);
-        await context.SaveChangesAsync();
+        try
+        {
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
+
+            return Ok(category);    
+        }
+        catch (Exception exception)
+        {
+            return StatusCode(500, "Não foi possivel deletar a categoria!")
+        }
         
-        return Ok(category);
     }
     
     /* async - indica que as ações serão executadas assicronamente,
