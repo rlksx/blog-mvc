@@ -58,7 +58,7 @@ public class CategoryController : ControllerBase
     [HttpPut("v1/categories/{id:int}")]
     public async Task<IActionResult> PutAsync(
         [FromServices] BlogDataContext context,
-        [FromBody] Category model,
+        [FromBody] EditorCategoryViewModel model,
         [FromRoute] int id)
     {
         var category = await context.Categories.FirstOrDefaultAsync(x => x.Id == id);
