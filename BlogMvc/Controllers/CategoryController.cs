@@ -14,10 +14,9 @@ public class CategoryController : ControllerBase
     [HttpGet("v1/categories")]
     public async Task<IActionResult> GetAsync([FromServices] BlogDataContext context)
     {
-        var category = await context.Categories.ToListAsync();
-
         try
         {
+            var category = await context.Categories.ToListAsync();
             // retorna todas as categorias
             return Ok(new ResultViewModel<List<Category>>(category));
         }
