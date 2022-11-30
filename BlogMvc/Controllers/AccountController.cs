@@ -13,15 +13,11 @@ namespace BlogMvc.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    // private readonly TokenService _tokenService;
-    // public AccountController(TokenService tokenService)
-        // => _tokenService = tokenService;
-        
     [HttpPost("v1/account/register")]
     public async Task<IActionResult> Post(
         [FromBody] RegisterViewModel model,
         [FromServices] BlogDataContext context,
-        [FromServices] EmailService emailService )
+        [FromServices] EmailService emailService)
     {
         if (!ModelState.IsValid)
             return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
@@ -41,11 +37,7 @@ public class AccountController : ControllerBase
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
 
-            emailService.Send(
-                user.Name,
-                user.Email, 
-                "Bem vindo ao blog", $"sua senha é {password}");
-            
+            emailService.Send(user.Name, user.Email, "Bem vindo ao blog!", $"Sua senha é {password}");
             return Ok(new ResultViewModel<dynamic>(new
             {
                 user = user.Email, password
@@ -59,29 +51,28 @@ public class AccountController : ControllerBase
         {
             return StatusCode(500, new ResultViewModel<string>("05X04 - Falha interna no servidor"));
         }
-
     }
-    
-    
-    [HttpPost("v1/account/login/")]
+
+    [HttpPost("v1/accounts/login")]
     public async Task<IActionResult> Login(
-        [FromServices] BlogDataContext context,
         [FromBody] LoginViewModel model,
+        [FromServices] BlogDataContext context,
         [FromServices] TokenService tokenService)
     {
-        /* gerando novo token */
         if (!ModelState.IsValid)
             return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
 
-        var user = await context.Users.AsNoTracking()
+        var user = await context
+            .Users
+            .AsNoTracking()
             .Include(x => x.Roles)
             .FirstOrDefaultAsync(x => x.Email == model.Email);
 
         if (user == null)
-            return StatusCode(401, new ResultViewModel<string>("Usuário ou senha inválidos!"));
+            return StatusCode(401, new ResultViewModel<string>("Usuário ou senha inválidos"));
 
         if (!PasswordHasher.Verify(user.PasswordHash, model.Password))
-            return StatusCode(401, new ResultViewModel<string>("Usuário ou senha inválidos!"));
+            return StatusCode(401, new ResultViewModel<string>("Usuário ou senha inválidos"));
 
         try
         {
@@ -90,7 +81,7 @@ public class AccountController : ControllerBase
         }
         catch
         {
-            return StatusCode(500, new ResultViewModel<string>("SD91J - Fala interna no servidor!"));
+            return StatusCode(500, new ResultViewModel<string>("05X04 - Falha interna no servidor"));
         }
     }
 }

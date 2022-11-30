@@ -10,7 +10,7 @@ public class EmailService
         string toEmail,
         string subject,
         string body,
-        string fromName = "Teste @rlksx",
+        string fromName = "Teste Teste",
         string fromEmail = "ryan.bromati@hotmail.com")
     {
         var smtpClient = new SmtpClient(Configuration.Smtp.Host, Configuration.Smtp.Port);
@@ -18,7 +18,6 @@ public class EmailService
         smtpClient.Credentials = new NetworkCredential(Configuration.Smtp.UserName, Configuration.Smtp.Password);
         smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
         smtpClient.EnableSsl = true;
-
         var mail = new MailMessage();
 
         mail.From = new MailAddress(fromEmail, fromName);
