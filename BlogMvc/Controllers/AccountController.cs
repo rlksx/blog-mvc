@@ -3,6 +3,8 @@ using BlogMvc.Extensions;
 using BlogMvc.Models;
 using BlogMvc.Services;
 using BlogMvc.ViewModels;
+using BlogMvc.ViewModels.Accounts;
+using BlogMvc.ViewModels.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

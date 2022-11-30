@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BlogMvc.ViewModels;
+namespace BlogMvc.ViewModels.Categories;
 
 public class EditorCategoryViewModel
 {

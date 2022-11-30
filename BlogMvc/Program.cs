@@ -17,6 +17,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();
+app.UseStaticFiles();
 app.Run();
 
 void LoadConfiguration(WebApplication app)
