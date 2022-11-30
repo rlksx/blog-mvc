@@ -20,7 +20,8 @@ public class AccountController : ControllerBase
     [HttpPost("v1/account/register")]
     public async Task<IActionResult> Post(
         [FromBody] RegisterViewModel model,
-        [FromServices] BlogDataContext context)
+        [FromServices] BlogDataContext context,
+        [FromServices] EmailService emailService )
     {
         if (!ModelState.IsValid)
             return BadRequest(new ResultViewModel<string>(ModelState.GetErrors()));
@@ -39,6 +40,11 @@ public class AccountController : ControllerBase
         {
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
+
+            emailService.Send(
+                user.Name,
+                user.Email, 
+                "Bem vindo ao blog", $"sua senha é {password}");
             
             return Ok(new ResultViewModel<dynamic>(new
             {
