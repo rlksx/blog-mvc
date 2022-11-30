@@ -118,7 +118,6 @@ public class CategoryController : ControllerBase
         {
             return StatusCode(500, new ResultViewModel<Category>("Não foi possivel Rxcluir essa categoria!"));
         }
-        
     }
     
     /* async - indica que as ações serão executadas assicronamente,
