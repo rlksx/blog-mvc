@@ -37,6 +37,15 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
+/* email config */
+Configuration.JwtKey = app.Configuration.GetValue<string>("JwtKey");
+Configuration.ApiKeyName = app.Configuration.GetValue<string>("ApiKeyName");
+Configuration.ApiKey = app.Configuration.GetValue<string>("ApiKey");
+
+var smtp = new Configuration.SmtpConfiguration();
+app.Configuration.GetSection("SmtpConfiguration").Bind(smtp);
+Configuration.Smtp = smtp;
+
 /* mapeando controler */
 app.MapControllers();
 
