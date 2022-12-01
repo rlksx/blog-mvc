@@ -74,10 +74,10 @@ public class PostController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new ResultViewModel<List<Category>>("05X04 - Falha interna no servidor"));
+            return StatusCode(500, new ResultViewModel<List<Post>>("05X04 - Falha interna no servidor"));
         }
     }
-    [HttpGet("v1/posts/category/{category}")]
+    [HttpGet("api/v1/posts/category/{category}")]
     public async Task<IActionResult> GetByCategoryAsync(
         [FromRoute] string category,
         [FromServices] BlogDataContext context,
