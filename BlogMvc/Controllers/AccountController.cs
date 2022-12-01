@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using BlogMvc.Data;
 using BlogMvc.Extensions;
 using BlogMvc.Models;
@@ -15,7 +17,7 @@ namespace BlogMvc.Controllers;
 [ApiController]
 public class AccountController : ControllerBase
 {
-    [HttpPost("v1/account/register")]
+    [HttpPost("v1/api/accounts/register")]
     public async Task<IActionResult> Post(
         [FromBody] RegisterViewModel model,
         [FromServices] BlogDataContext context,
@@ -55,7 +57,7 @@ public class AccountController : ControllerBase
         }
     }
 
-    [HttpPost("v1/accounts/login")]
+    [HttpPost("v1/api/accounts/login")]
     public async Task<IActionResult> Login(
         [FromBody] LoginViewModel model,
         [FromServices] BlogDataContext context,
@@ -84,6 +86,49 @@ public class AccountController : ControllerBase
         catch
         {
             return StatusCode(500, new ResultViewModel<string>("05X04 - Falha interna no servidor"));
+        }
+
+        [Authorize]
+        [HttpPost("v1/api/accounts/upload-image")]
+        public async Task<IActionResult> UploadImage(
+            [FromServices] BlogDataContext context,
+            [FromBody] UploadImageViewModel  model)
+        {
+            var fileName = $"{Guid.NewGuid().ToString()}.jpg";
+            var data = new Regex(@"^data:image\/[a-z]+;base64,")
+                .Replace(model.Base64Image,"");
+
+            var bytes = Convert.FromBase64String(data);
+
+            try
+            {
+                await System.IO.File.WriteAllBytesAsync($"wwwroot/images/{fileName}", bytes);
+            }
+            catch
+            {
+                StatusCode(500, new ResultViewModel<string>("53OKF - Falha interna no servidor!"));
+            }
+
+            var user = await context
+                .Users.
+                FirstOrDefaultAsync(x => x.Email == User.Identity.Name);
+
+            if (user == null)
+                return NotFound(new ResultViewModel<User>("usuário não encontrado"));
+
+            user.Image = $"https://localhost:7037/v1/images/{fileName}";
+
+            try
+            {
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
+            }
+            catch
+            {
+                return StatusCode(500, new ResultViewModel<string>("IK4O - Falha intera no servior"));
+            }
+
+            return Ok(new ResultViewModel<string>("Imagem alterada com sucesso", null));
         }
     }
 }
