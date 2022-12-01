@@ -1,6 +1,6 @@
 namespace BlogMvc.ViewModels.Accounts;
 
-public class ListPostViewModel
+public class ListPostsViewModel
 {
     public int Id { get; set; }
     public string Title { get; set; }
