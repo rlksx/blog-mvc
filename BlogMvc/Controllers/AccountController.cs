@@ -102,7 +102,7 @@ public class AccountController : ControllerBase
 
         try
         {
-            await System.IO.File.WriteAllBytesAsync($"wwwroot/images/{fileName}", bytes);
+            await System.IO.File.WriteAllBytesAsync($"wwwroot/Images/{fileName}", bytes);
         }
         catch
         {
@@ -116,7 +116,7 @@ public class AccountController : ControllerBase
         if (user == null)
             return NotFound(new ResultViewModel<User>("usuário não encontrado"));
 
-        user.Image = $"https://localhost:7037/v1/images/{fileName}";
+        user.Image = $"https://localhost:7037/images/{fileName}";
 
         try
         {
