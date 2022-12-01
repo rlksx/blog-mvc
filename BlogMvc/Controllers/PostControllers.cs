@@ -15,7 +15,7 @@ public class PostController : ControllerBase
     public async Task<IActionResult> GetAsync(
         [FromServices] BlogDataContext context,
         [FromQuery] int page = 0,
-        [FromQuery] int pageSize = 25)
+        [FromQuery] int pageSize = 5)
     {
         try
         {
